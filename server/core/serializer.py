@@ -23,14 +23,10 @@ class CountrySerializer(ModelSerializer):
 
 class StateSerializer(ModelSerializer):
     country_name = SerializerMethodField(read_only=True)
-    country_id = SerializerMethodField(read_only=True)
 
     class Meta:
         model = StateModel
-        fields = ["id", "name", "country_name", "country_id"]
+        fields = ["id", "name", "country", "country_name"]
 
     def get_country_name(self, obj):
         return obj.country.name
-
-    def get_country_id(self, obj):
-        return obj.country.id
