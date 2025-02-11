@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from core.models import Country, LinkType, Skill, State
+from core.models import Country, LinkType, State
 
 
 class EducationalInstitute(models.Model):
@@ -27,18 +27,3 @@ class EducationalInstituteLink(models.Model):
 
     def __str__(self):
         return self.url
-
-
-class EducationalInstituteSkill(models.Model):
-    educational_institute = models.ForeignKey(
-        EducationalInstitute, on_delete=models.CASCADE, related_name="LinkedEducationalInstitute"
-    )
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="LinkedSkillEducationalInstitute")
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=["educational_institute", "skill"], name="unique_education_institute_skills")
-        ]
-
-    def __str__(self):
-        return f"{self.educational_institute.name} -> {self.skill.name}"
