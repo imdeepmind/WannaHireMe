@@ -1,5 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 
+from core.serializer import CountrySerializer, StateSerializer, LinkTypeSerializer
+
 from .models import (
     EducationalInstitute as EducationalInstituteModel,
     EducationalInstituteLink as EducationalInstituteLinkModel,
@@ -7,6 +9,8 @@ from .models import (
 
 
 class EducationalInstituteLinkSerializer(ModelSerializer):
+    link_type = LinkTypeSerializer(read_only=True)
+
     class Meta:
         model = EducationalInstituteLinkModel
         fields = ["link_type", "url"]
@@ -14,6 +18,8 @@ class EducationalInstituteLinkSerializer(ModelSerializer):
 
 class EducationalInstituteSerializer(ModelSerializer):
     links = EducationalInstituteLinkSerializer(many=True, required=False, source="EducationalInstitute")
+    country = CountrySerializer(read_only=True)
+    state = StateSerializer(read_only=True)
 
     class Meta:
         model = EducationalInstituteModel
