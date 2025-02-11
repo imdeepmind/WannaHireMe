@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.models import LinkType, Country, State
+from core.models import LinkType, Country, Skill, State
 
 
 class Company(models.Model):
@@ -26,3 +26,14 @@ class CompanyLink(models.Model):
 
     def __str__(self):
         return self.url
+
+
+class CompanySkill(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="LinkedCompany")
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="LinkedSkillCompany")
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["company", "skill"], name="unique_company_skill")]
+
+    def __str__(self):
+        return f"{self.company.name} -> {self.skill.name}"

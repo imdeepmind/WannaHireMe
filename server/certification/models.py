@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from core.models import LinkType
+from core.models import LinkType, Skill
 
 
 # Create your models here.
@@ -25,3 +25,14 @@ class CertificationLink(models.Model):
 
     def __str__(self):
         return self.url
+
+
+class CertificationSkill(models.Model):
+    certification = models.ForeignKey(Certification, on_delete=models.CASCADE, related_name="LinkedCertification")
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="LinkedSkillCertification")
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["certification", "skill"], name="unique_certification_skill")]
+
+    def __str__(self):
+        return f"{self.certification.name} -> {self.skill.name}"
