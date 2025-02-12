@@ -20,8 +20,8 @@ class Company(models.Model):
 
 
 class CompanyLink(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="Company")
-    link_type = models.ForeignKey(LinkType, on_delete=models.CASCADE, related_name="LinkTypeCompany")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="company_links_for_link")
+    link_type = models.ForeignKey(LinkType, on_delete=models.CASCADE, related_name="company_link_type")
     url = models.CharField(max_length=255)
 
     def __str__(self):
@@ -29,8 +29,8 @@ class CompanyLink(models.Model):
 
 
 class CompanySkill(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="LinkedCompany")
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="LinkedSkillCompany")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="company_skill_company")
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="company_skill_skill")
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["company", "skill"], name="unique_company_skill")]
