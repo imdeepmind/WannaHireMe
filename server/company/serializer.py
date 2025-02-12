@@ -90,3 +90,40 @@ class CompanySerializer(ModelSerializer):
         CompanySkillModel.objects.bulk_create([CompanySkillModel(company=instance, **skill) for skill in skills_data])
 
         return instance
+
+    def update(self, instance, validated_data):
+        links_data = validated_data.pop("company_links_for_link", [])
+        skills_data = validated_data.pop("company_skill_company", [])
+
+        if len(links_data) > 5:
+            raise ValidationError("Only 5 links can be added")
+
+        if len(skills_data) > 10:
+            raise ValidationError("Only 10 skills can be added")
+
+        instance.name = validated_data.get("name", instance.name)
+        instance.description = validated_data.get("description", instance.description)
+        instance.logo_uri = validated_data.get("logo_uri", instance.logo_uri)
+        instance.tier = validated_data.get("tier", instance.tier)
+
+        instance.address = validated_data.get("address", instance.address)
+        instance.country = validated_data.get("country", instance.country)
+        instance.state = validated_data.get("state", instance.state)
+
+        instance.save()
+
+        if links_data:
+            existing_link_ids = [link.id for link in instance.company_links_for_link.all()]
+
+            CompanyLinkModel.objects.filter(id__in=existing_link_ids).delete()
+            CompanyLinkModel.objects.bulk_create([CompanyLinkModel(company=instance, **link) for link in links_data])
+
+        if skills_data:
+            existing_skill_ids = [skill.id for skill in instance.company_skill_company.all()]
+
+            CompanySkillModel.objects.filter(id__in=existing_skill_ids).delete()
+            CompanySkillModel.objects.bulk_create(
+                [CompanySkillModel(company=instance, **skill) for skill in skills_data]
+            )
+
+        return instance
