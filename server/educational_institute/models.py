@@ -20,9 +20,9 @@ class EducationalInstitute(models.Model):
 
 class EducationalInstituteLink(models.Model):
     educational_institute = models.ForeignKey(
-        EducationalInstitute, on_delete=models.CASCADE, related_name="EducationalInstitute"
+        EducationalInstitute, on_delete=models.CASCADE, related_name="educational_institute_links"
     )
-    link_type = models.ForeignKey(LinkType, on_delete=models.CASCADE, related_name="LinkType")
+    link_type = models.ForeignKey(LinkType, on_delete=models.CASCADE, related_name="educational_institute_link_type")
     url = models.CharField(max_length=255)
 
     def __str__(self):
