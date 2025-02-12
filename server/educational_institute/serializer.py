@@ -46,14 +46,14 @@ class EducationalInstituteSerializer(ModelSerializer):
     def validate_links(self, links):
         if len(links) > 5:
             raise ValidationError("Only 5 links can be added")
-        
+
         return links
-    
+
     def create(self, validated_data):
         links_data = validated_data.pop("educational_institute_links", [])
 
         if len(links_data) > 5:
-            raise ValidationError('Only 5 links can be added')
+            raise ValidationError("Only 5 links can be added")
 
         country = validated_data.pop("country")
         state = validated_data.pop("state")
@@ -65,5 +65,32 @@ class EducationalInstituteSerializer(ModelSerializer):
 
         link_instances = [EducationalInstituteLinkModel(educational_institute=instance, **link) for link in links_data]
         EducationalInstituteLinkModel.objects.bulk_create(link_instances)
+
+        return instance
+
+    def update(self, instance, validated_data):
+        links_data = validated_data.pop("educational_institute_links", [])
+
+        if len(links_data) > 5:
+            raise ValidationError("Only 5 links can be added")
+
+        instance.name = validated_data.get("name", instance.name)
+        instance.description = validated_data.get("description", instance.description)
+        instance.logo_uri = validated_data.get("logo_uri", instance.logo_uri)
+        instance.selection_difficulty = validated_data.get("selection_difficulty", instance.selection_difficulty)
+        instance.address = validated_data.get("address", instance.address)
+
+        instance.country = validated_data.get("country", instance.country)
+        instance.state = validated_data.get("state", instance.state)
+
+        instance.save()
+
+        if links_data:
+            existing_link_ids = [link.id for link in instance.educational_institute_links.all()]
+
+            EducationalInstituteLinkModel.objects.filter(id__in=existing_link_ids).delete()
+            EducationalInstituteLinkModel.objects.bulk_create(
+                [EducationalInstituteLinkModel(educational_institute=instance, **link) for link in links_data]
+            )
 
         return instance
